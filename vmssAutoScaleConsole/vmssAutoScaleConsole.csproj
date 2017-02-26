@@ -102,6 +102,10 @@
       <Project>{6537d67c-4e93-47cc-9421-d3f58f4b904e}</Project>
       <Name>vmssAutoScale.Interfaces</Name>
     </ProjectReference>
+    <ProjectReference Include="..\vmssAutoScale.ServiceBusWatcher\vmssAutoScale.ServiceBusWatcher.csproj">
+      <Project>{8f3928e8-aed7-4c80-8052-bc3d1fe32985}</Project>
+      <Name>vmssAutoScale.ServiceBusWatcher</Name>
+    </ProjectReference>
     <ProjectReference Include="..\vmssAutoScale.SqlLoadWatcher\vmssAutoScale.SqlLoadWatcher.csproj">
       <Project>{c31ac845-35e2-4e22-9320-16191da29e4e}</Project>
       <Name>vmssAutoScale.SqlLoadWatcher</Name>
