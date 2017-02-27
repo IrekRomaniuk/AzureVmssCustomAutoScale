@@ -11,6 +11,8 @@ You can clone this repo and create your own custom logic, just create a new clas
 
 There's also console app for testing locally.
 
+![alt tag](https://raw.githubusercontent.com/zivstaeinberg/AzureVmssCustomAutoScale/master/ArcFile.PNG)
+
 ## Requirements
 * Azure Function App
 * VMSS
