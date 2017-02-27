@@ -2,8 +2,10 @@
 Currently Azure Virtual Machine Scale Sets (VMSS) doesn't support custom logic based [auto scaling](https://docs.microsoft.com/en-us/azure/monitoring-and-diagnostics/insights-advanced-autoscale-virtual-machine-scale-sets).
 
 This solution was developed for real customer need,
-It based on Azure Function App which triggered by timer and samples SQL stored procedure to get current load on VMSS,
+It based on Azure Function App which triggered by timer and samples ServiceBus or SQL Database stored procedure to get current load on VMSS,
 Azure Function then adds or removes VMs accordingly to configured threshold.
+
+Please select the samples product: ServiceBus or SQL Database in the concole application project or in the Azure Function project.
 
 You can clone this repo and create your own custom logic, just create a new class library and implement [ILoadWatcher](https://github.com/guybartal/AzureVmssCustomAutoScale/blob/master/vmssAutoScale.Interfaces/ILoadWatcher.cs) interface.
 
@@ -16,6 +18,11 @@ There's also console app for testing locally.
 * Create application Key, save this secret, you will need that later for deployment
 * Give the application "Owner" role on VMSS
 * Install [Visual Studio Tools for Azure Functions](https://blogs.msdn.microsoft.com/webdev/2016/12/01/visual-studio-tools-for-azure-functions/)
+* Create SQL Database and/or ServiceBus Topics or and Q.
+
+## Scaling Logic Parameters
+* These paramters decides if input data is X & Y will the scaling will be up with Z VM'S or down.
+* Please decide where to store the scaling logic parameters to be store, the options are Database or File.
 
 ## Deployment
 * Open solution in visual studio 2015 update 3
