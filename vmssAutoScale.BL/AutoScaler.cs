@@ -25,7 +25,19 @@ namespace vmssAutoScale.BL
         private ILoadWatcher _loadWatcher;
         private int _maxThreshold, _minThreshold, _maxScale, _minScale;
         private string _clientId, _clientSecret, _tenantId, _azureArmApiBaseUrl, _subscriptionId, _resourceGroup, _vmssName, _vmssApiVersion;
+        private int _ScaleUpBy, _ScaleDownBy;
 
+        private string _ServiceBusConnectionString;
+        private string _Topic_A_Name;
+        private string _Topic_B_Name;
+        private string _Subscription_A_Name;
+        private string _Subscription_B_Name;
+
+        private int _ServiceBusMessage_Q_Count_UP;
+        private int _ServiceBusMessage_Q_Time_UP;
+        private int _ServiceBusMessage_Q_Count_DOWN;
+        private int _ServiceBusMessage_Q_Time_Down;
+        
         public AutoScaler(ILoadWatcher loadWatcher)
         {
             _loadWatcher = loadWatcher;
@@ -54,6 +66,42 @@ namespace vmssAutoScale.BL
                 OnTraceEvent($"MinThreshold Environment Variable is missing, setting MinThreshold to {_minScale}");
             }
 
+            if (!int.TryParse(ConfigurationManager.AppSettings["ScaleUpBy"], out _ScaleUpBy))
+            {
+                _ScaleUpBy = 1;
+                OnTraceEvent($"_ScaleUpBy Environment Variable is missing, setting _ScaleUpBy to {_ScaleUpBy}");
+            }
+
+            if (!int.TryParse(ConfigurationManager.AppSettings["ScaleDownBy"], out _ScaleDownBy))
+            {
+                _ScaleUpBy = 1;
+                OnTraceEvent($"_ScaleDownBy Environment Variable is missing, setting _ScaleUpBy to {_ScaleDownBy}");
+            }
+
+            if (!int.TryParse(ConfigurationManager.AppSettings["ServiceBusMessage_Q_Count_UP"], out _ServiceBusMessage_Q_Count_UP))
+            {
+                _ScaleUpBy = 1;
+                OnTraceEvent($"_ServiceBusMessage_Q_Count_UP Environment Variable is missing, setting _ScaleUpBy to {_ServiceBusMessage_Q_Count_UP}");
+            }
+
+            if (!int.TryParse(ConfigurationManager.AppSettings["ServiceBusMessage_Q_Time_UP"], out _ServiceBusMessage_Q_Time_UP))
+            {
+                _ScaleUpBy = 1;
+                OnTraceEvent($"_ServiceBusMessage_Q_Time_UP Environment Variable is missing, setting _ScaleUpBy to {_ServiceBusMessage_Q_Time_UP}");
+            }
+
+            if (!int.TryParse(ConfigurationManager.AppSettings["ServiceBusMessage_Q_Count_DOWN"], out _ServiceBusMessage_Q_Count_DOWN))
+            {
+                _ScaleUpBy = 1;
+                OnTraceEvent($"_ServiceBusMessage_Q_Count_DOWN Environment Variable is missing, setting _ScaleUpBy to {_ServiceBusMessage_Q_Count_DOWN}");
+            }
+
+            if (!int.TryParse(ConfigurationManager.AppSettings["ServiceBusMessage_Q_Time_Down"], out _ServiceBusMessage_Q_Time_Down))
+            {
+                _ScaleUpBy = 1;
+                OnTraceEvent($"_ServiceBusMessage_Q_Time_Down Environment Variable is missing, setting _ScaleUpBy to {_ServiceBusMessage_Q_Time_Down}");
+            }
+            
             _clientId = ConfigurationManager.AppSettings["ClientId"];
             _clientSecret = ConfigurationManager.AppSettings["ClientSecret"];
             _tenantId = ConfigurationManager.AppSettings["TenantId"];
@@ -62,6 +110,12 @@ namespace vmssAutoScale.BL
             _resourceGroup = ConfigurationManager.AppSettings["ResourceGroup"];
             _vmssName = ConfigurationManager.AppSettings["VmssName"];
             _vmssApiVersion = ConfigurationManager.AppSettings["VmssApiVersion"];
+            _ServiceBusConnectionString = ConfigurationManager.AppSettings["ServiceBusConnectionString"];
+            _Topic_A_Name = ConfigurationManager.AppSettings["Topic_A_Name"];
+            _Topic_B_Name = ConfigurationManager.AppSettings["Topic_B_Name"];
+            _Subscription_A_Name = ConfigurationManager.AppSettings["Subscription_A_Name"];
+            _Subscription_B_Name = ConfigurationManager.AppSettings["Subscription_B_Name"];
+                        
         }
 
         public async Task AutoScale()
@@ -211,15 +265,60 @@ namespace vmssAutoScale.BL
 
             if (scaleDirection == ScaleDirection.Up)
             {
-                Sku.capacity += 1;
+                Sku.capacity += _ScaleUpBy;
             }
             else
             {
-                Sku.capacity -= 1;
+                Sku.capacity -= _ScaleDownBy;
             }
 
             OnTraceEvent($"setting currect vmss capacity from {current} to {JsonConvert.SerializeObject(Sku.capacity)}");
             return await SetVMSSCapacityAsync(Sku);
+        }
+
+        public string getServiceBusConnectionString()
+        {
+            return _ServiceBusConnectionString;
+        }
+
+        public string getTopic_A_Name()
+        {
+            return _Topic_A_Name;
+        }
+
+        public string getTopic_B_Name()
+        {
+            return _Topic_B_Name;
+        }
+
+        public string getSubscription_A_Name()
+        {
+            return _Subscription_A_Name;
+        }
+
+        public string getSubscription_B_Name()
+        {
+            return _Subscription_B_Name;
+        }
+
+        public int getServiceBusMessage_Q_Count_UP()
+        {
+            return _ServiceBusMessage_Q_Count_UP;
+        }
+
+        public int getServiceBusMessage_Q_Time_UP()
+        {
+            return _ServiceBusMessage_Q_Time_UP;
+        }
+
+        public int getServiceBusMessage_Q_Count_DOWN()
+        {
+            return _ServiceBusMessage_Q_Count_DOWN;
+        }
+
+        public int getServiceBusMessage_Q_Time_Down()
+        {
+            return _ServiceBusMessage_Q_Time_Down;
         }
     }
 }
