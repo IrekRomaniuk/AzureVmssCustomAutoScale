@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,6 +8,9 @@ using vmssAutoScale.Interfaces;
 using Microsoft.ServiceBus.Messaging;
 using Microsoft.ApplicationInsights;
 using System.Threading;
+
+
+
 
 namespace vmssAutoScale.ServiceBusWatcher
 {
@@ -43,10 +47,54 @@ namespace vmssAutoScale.ServiceBusWatcher
         private int _ServiceBusMessage_Q_Count_DOWN;
         private int _ServiceBusMessage_Q_Time_Down;
 
+        public delegate void TraceEventHandler(object sender, string message);
+        public event TraceEventHandler TraceEvent;
+
         private ServiceBusHelper serviceBusHelper;
         public static long lngIndex = 0;       
 
         private TelemetryClient tc = new TelemetryClient();
+
+        public ServiceBusWatcher()
+        {
+            if (!int.TryParse(ConfigurationManager.AppSettings["ServiceBusMessage_Q_Count_UP"], out _ServiceBusMessage_Q_Count_UP))
+            {
+                _ServiceBusMessage_Q_Count_UP = 1;
+                OnTraceEvent($"_ServiceBusMessage_Q_Count_UP Environment Variable is missing, setting _ScaleUpBy to {_ServiceBusMessage_Q_Count_UP}");
+            }
+
+            if (!int.TryParse(ConfigurationManager.AppSettings["ServiceBusMessage_Q_Time_UP"], out _ServiceBusMessage_Q_Time_UP))
+            {
+                _ServiceBusMessage_Q_Time_UP = 1;
+                OnTraceEvent($"_ServiceBusMessage_Q_Time_UP Environment Variable is missing, setting _ScaleUpBy to {_ServiceBusMessage_Q_Time_UP}");
+            }
+
+            if (!int.TryParse(ConfigurationManager.AppSettings["ServiceBusMessage_Q_Count_DOWN"], out _ServiceBusMessage_Q_Count_DOWN))
+            {
+                _ServiceBusMessage_Q_Count_DOWN = 1;
+                OnTraceEvent($"_ServiceBusMessage_Q_Count_DOWN Environment Variable is missing, setting _ScaleUpBy to {_ServiceBusMessage_Q_Count_DOWN}");
+            }
+
+            if (!int.TryParse(ConfigurationManager.AppSettings["ServiceBusMessage_Q_Time_Down"], out _ServiceBusMessage_Q_Time_Down))
+            {
+                _ServiceBusMessage_Q_Time_Down = 1;
+                OnTraceEvent($"_ServiceBusMessage_Q_Time_Down Environment Variable is missing, setting _ScaleUpBy to {_ServiceBusMessage_Q_Time_Down}");
+            }
+
+            connectionString = ConfigurationManager.AppSettings["ServiceBusConnectionString"];
+            _Topic_A_Name = ConfigurationManager.AppSettings["Topic_A_Name"];
+            _Topic_B_Name = ConfigurationManager.AppSettings["Topic_B_Name"];
+            _Subscription_A_Name = ConfigurationManager.AppSettings["Subscription_A_Name"];
+            _Subscription_B_Name = ConfigurationManager.AppSettings["Subscription_B_Name"];
+        }
+
+        private void OnTraceEvent(string message)
+        {
+            if (this.TraceEvent != null)
+            {
+                this.TraceEvent(this, message);
+            }
+        }
 
         public enum EncodingType
         {
