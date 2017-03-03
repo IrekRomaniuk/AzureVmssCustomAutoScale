@@ -13,6 +13,8 @@ There's also console app for testing locally.
 
 ![alt tag](https://raw.githubusercontent.com/zivshtaeinberg/AzureVmssCustomAutoScale/master/ArcFile.PNG)
 
+![alt tag](https://raw.githubusercontent.com/zivshtaeinberg/AzureVmssCustomAutoScale/master/AppIns.PNG)
+
 ## Requirements
 * Azure Function App
 * VMSS
@@ -21,6 +23,7 @@ There's also console app for testing locally.
 * Give the application "Owner" role on VMSS
 * Install [Visual Studio Tools for Azure Functions](https://blogs.msdn.microsoft.com/webdev/2016/12/01/visual-studio-tools-for-azure-functions/)
 * Create SQL Database and/or ServiceBus Topics or and Q.
+* Create Application Insights.
 
 ## Scaling Logic Parameters
 * These paramters decides if input data is X & Y will the scaling will be up with Z VM'S or down.

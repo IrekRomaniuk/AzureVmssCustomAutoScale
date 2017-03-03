@@ -16,6 +16,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A737A385-740A-40B5-BFCD-D18A85B1C86E}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		AppIns.PNG = AppIns.PNG
 		ArcFile.PNG = ArcFile.PNG
 		README.md = README.md
 	EndProjectSection
